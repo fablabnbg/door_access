@@ -21,7 +21,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="Door access control"
 NAME=main.py
-DAEMON=/home/acme/door_access/$NAME
+DAEMON=/usr/local/door_access/$NAME
 DAEMON_ARGS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/door_access
