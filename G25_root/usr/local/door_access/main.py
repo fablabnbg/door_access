@@ -14,7 +14,7 @@ def card_on_door(ident):
 	reader_door.beep(10)
 	al=auth.auth(ident)
 	if stat.enter(ident,al):
-		lock.open()
+		lock.open(ident,al)
 
 def card_on_exit(ident):
 	print(ident)

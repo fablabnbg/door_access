@@ -29,7 +29,7 @@ class Lock_behaviour:
 			self.closing=True
 			threading.Thread(target=lambda timeout=60:self._close_sequencer(timeout)).start()
 
-	def open(self):
+	def open(self,ident,access_level):
 		"""Open the door. Use the latch if it's unlocked.
 		Aborts the closing sequence if it's running.
 		"""
@@ -45,7 +45,7 @@ class Lock_behaviour:
 			# longer than one minute since trying to open
 			self.open_time=t
 			self.open_retry_count=1
-		if self.lock.is_locked() or self.open_retry_count>=3:
+		if (self.lock.is_locked() or self.open_retry_count>=3) and access_level>=10:
 			self.lock.open()
 		else:
 			self.lock.latch()
