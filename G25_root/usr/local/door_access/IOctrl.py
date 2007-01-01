@@ -27,7 +27,7 @@ class gpio:
 				f.write(str(num))
 
 		with open(os.path.join(self.devname,'active_low'),'w') as f:
-			f.write(int(active_low))
+			f.write(str(int(active_low)))
 
 		if direction:
 			self.set_dir(direction)

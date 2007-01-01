@@ -16,7 +16,7 @@ class Edge_detect(threading.Thread):
 	start : start counting thread
 	reset : reset counter
 	"""
-	def __init__(self,pin):
+	def __init__(self,pin,*args,**kwargs):
 		super().__init__(*args,**kwargs)
 		pin.set_dir('in')
 		pin.set_interrupt('both')
