@@ -11,8 +11,9 @@ import time
 
 def card_on_door(ident):
 	print(ident)
-	reader_door.beep(10)
 	al=auth.auth(ident)
+	if al>0:
+		reader_door.beep(10)
 	if stat.enter(ident,al):
 		lock.open(ident,al)
 
