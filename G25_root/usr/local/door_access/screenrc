@@ -1,0 +1,4 @@
+sessionname door_accessd
+screen /usr/local/door_access/main.py
+zombie kr
+detach
