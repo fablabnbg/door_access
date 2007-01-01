@@ -75,7 +75,7 @@ class gpio:
 		"""
 		def runthread():
 			self.set(1)
-			time.sleep(0.1)
+			time.sleep(duration)
 			self.set(0)
 		threading.Thread(target=runthread).start()
 
