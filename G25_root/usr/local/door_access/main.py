@@ -20,11 +20,11 @@ def card_on_exit(ident):
 	print(ident)
 	lab_status=stat.leave(ident)
 	if lab_status==stat.NO_MORE_TRUSTED:
-		reader_door.beep(99)
+		reader_exit.beep(99)
 	elif lab_status==stat.EMPTY:
-		reader_door.beep(20)
+		reader_exit.beep(20)
 	else:
-		reader_door.beep(10)
+		reader_exit.beep(10)
 	#if stat.is_empty():
 	stat.flush()
 	lock.close()
@@ -33,6 +33,7 @@ stat=status_manager.Status_manager()
 door=door.Door(gpio(30))
 lock_control=lock_ctrl.Lock_ctrl(IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(29))
 lock_led=Edge_detect(gpio(23,active_low=True))
+lock_led.start()
 
 # set unused but connected gpios to output
 gpio(66,'out')

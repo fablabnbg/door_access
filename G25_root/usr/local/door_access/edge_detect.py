@@ -18,8 +18,9 @@ class Edge_detect(threading.Thread):
 	"""
 	def __init__(self,pin,*args,**kwargs):
 		super().__init__(*args,**kwargs)
-		pin.set_dir('in')
-		pin.set_interrupt('both')
+		self.pin=pin
+		self.pin.set_dir('in')
+		self.pin.set_interrupt('both')
 		self.abort=False
 		self.mutex=threading.Lock()
 		self.reset()

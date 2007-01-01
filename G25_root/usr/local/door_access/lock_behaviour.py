@@ -43,7 +43,7 @@ class Lock_behaviour:
 			self.open_retry_count+=1
 		else:
 			# longer than one minute since trying to open
-			self.self.open_time=t
+			self.open_time=t
 			self.open_retry_count=1
 		if self.lock.is_locked() or self.open_retry_count>=3:
 			self.lock.open()

@@ -96,6 +96,7 @@ class gpio:
 		"""For for edge defined with 'set_interrupt'"""
 		p=select.poll()
 		with open(os.path.join(self.devname,'value')) as f:
+			f.read()
 			p.register(f,select.POLLPRI|select.POLLERR)
 			p.poll()
 
