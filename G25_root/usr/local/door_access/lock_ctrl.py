@@ -41,4 +41,4 @@ class Lock_ctrl:
 	def latch(self):
 		"""open the latch."""
 		print('latch')
-		self.latcher.tap(5)
+		self.latcher.tap(3)
