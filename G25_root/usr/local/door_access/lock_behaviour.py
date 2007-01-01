@@ -38,8 +38,8 @@ class Lock_behaviour:
 		while self.closing:
 			time.sleep(0.05)
 		t=time.time()
-		if self.open_time+60>t:
-			# Tried to open door more than once within one minute
+		if self.open_time+30>t:
+			# Tried to open door more than once within one half minute
 			self.open_retry_count+=1
 		else:
 			# longer than one minute since trying to open
