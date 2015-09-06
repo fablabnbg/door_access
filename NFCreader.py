@@ -16,7 +16,8 @@ class NFCreader(threading.Thread):
 					self.beeptime=99
 				if self.beeptime<0:
 					self.beeptime=0
-				self.s.write('b{:02}\n'.format(self.beeptime).encode('ascii'))
+				beepcmd='B{:02}\n\r'.format(self.beeptime).encode('ascii')
+				self.s.write(beepcmd)
 				self.beeptime=0
 			line=self.s.readline()
 			if line:

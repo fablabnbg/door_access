@@ -10,13 +10,10 @@ import time
 
 def card_on_door(ident):
 	print(ident)
+	reader_door.beep(10)
 	al=auth.auth(ident)
-	status=lock.is_locked()
 	if stat.enter(ident,al):
-		if status:
-			lock.open()
-		else:
-			lock.latch()
+		lock.open()
 
 def card_on_exit(ident):
 	print(ident)
