@@ -7,13 +7,16 @@ class Lock_behaviour:
 		self.door=door
 		self.beep=beeper
 		self.abort=False
+		self.closing=False
 		if door.is_closed():
 			self.lock.close()
 		else:
-			threading.Thread(target=self._close_sequencer,timeout=0).start()
+			threading.Thread(target=lambda timeout=0:self._close_sequencer(timeout)).start()
 
 	def close(self):
-		threading.Thread(target=self._close_sequencer,timeout=60).start()
+		if not self.closing:
+			self.closing=True
+			threading.Thread(target=lambda timeout=60:self._close_sequencer(timeout)).start()
 
 	def open(self):
 		self.abort=True
@@ -23,7 +26,8 @@ class Lock_behaviour:
 			self.lock.latch()
 
 	def _close_sequencer(self,timeout):
-		def timed_out(self,started,duration):
+		print('start close')
+		def timed_out(started,duration):
 			return duration and time.time()-started>duration
 		WAIT_OPEN_DOOR=0
 		WAIT_CLOSED_DOOR=1
@@ -40,7 +44,7 @@ class Lock_behaviour:
 				if self.door.is_open():
 					state=WAIT_CLOSED_DOOR
 			if state==WAIT_CLOSED_DOOR:
-				if self.door.is_closed()():
+				if self.door.is_closed():
 					state=WAIT_CERTAIN_CLOSED_DOOR
 					waitstart=time.time()
 			if state==WAIT_CERTAIN_CLOSED_DOOR:
@@ -54,3 +58,4 @@ class Lock_behaviour:
 				lastbeep=time.time()
 			time.sleep(0.1)
 		self.abort=False
+		self.closing=False
