@@ -1,13 +1,15 @@
 import threading
-import IOctrl
 import time
 
 class Lock_ctrl:
 	def __init__(self,door,IO_open,IO_close,IO_latch):
 		self.door=door
-		self.opener=IOctrl.gpio(IO_open,'out')
-		self.closer=IOctrl.gpio(IO_close,'out')
-		self.latcher=IOctrl.gpio(IO_latch,'out')
+		self.opener=IO_open
+		self.opener.set_dir('out')
+		self.closer=IO_close
+		self.closer.set_dir('out')
+		self.latcher=IO_latch
+		self.latcher.set_dir('out')
 		self.mutex=threading.Lock()
 		self.opener.set(0)
 		self.closer.set(0)
@@ -49,7 +51,7 @@ class Lock_ctrl:
 	def close(self,beeper,timeout=60):
 		def runthread():
 			def check_timeout():
-				return timeout && time.time()-starttime>timeout
+				return timeout and time.time()-starttime>timeout
 			starttime=time.time()
 			try:
 				while self.door.is_closed():

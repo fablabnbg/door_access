@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import lock_ctrl
+from  IOctrl import gpio
 import NFCreader
 import authentication
 import door
@@ -27,8 +28,8 @@ def card_on_exit(ident):
 	lock.close(reader_exit.beep)
 
 stat=status_manager.Status_manager()
-door=door.Door(30)
-lock=lock_ctrl.Lock_ctrl(door,IO_open=95,IO_close=67,IO_latch=23)
+door=door.Door(gpio(30))
+lock=lock_ctrl.Lock_ctrl(door,IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(23))
 auth=authentication.Auth_file('/etc/door_access')
 reader_door=NFCreader.NFCreader(dev='/dev/ttyS1',on_card=card_on_door)
 reader_door.start()

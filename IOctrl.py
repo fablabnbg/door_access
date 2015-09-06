@@ -6,13 +6,14 @@ portmap={
 	}
 
 class gpio:
-	def __init__(self,num,direction):
+	def __init__(self,num,direction=None):
 		port='A' if num<64 else 'C'
 		self.devname='/sys/class/gpio/pio'+port+str(portmap[port][num])
 		if not os.path.exists(self.devname):
 			with open('/sys/class/gpio/export','w') as f:
 				f.write(str(num))
-		self.set_dir(direction)
+		if direction:
+			self.set_dir(direction)
 
 	def set_dir(self,direction):
 		if not direction in ('in','out'):
