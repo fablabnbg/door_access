@@ -22,7 +22,8 @@ class NFCreader(threading.Thread):
 			line=self.s.readline()
 			if line:
 				self.interpret(line)
-			time.sleep(0.1)
+			else:
+				time.sleep(0.1)
 
 	def beep(self,duration):
 		self.beeptime=duration
