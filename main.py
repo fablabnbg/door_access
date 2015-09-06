@@ -29,9 +29,11 @@ def card_on_exit(ident):
 
 stat=status_manager.Status_manager()
 door=door.Door(gpio(30))
-lock=lock_ctrl.Lock_ctrl(door,IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(23))
+lock_control=lock_ctrl.Lock_ctrl(IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(23))
 auth=authentication.Auth_file('/etc/door_access')
 reader_door=NFCreader.NFCreader(dev='/dev/ttyS1',on_card=card_on_door)
-reader_door.start()
 reader_exit=NFCreader.NFCreader(dev='/dev/ttyS2',on_card=card_on_exit)
+lock=Lock_behaviour(lock_control,door,reader_exit.beep)
+
 reader_exit.start()
+reader_door.start()
