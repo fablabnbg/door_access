@@ -1,7 +1,8 @@
 class Status_manager:
-	ACCESS_WITH_OTHERS=5
-	ACCESS_ALONE=10
+	ACCESS_WITH_OTHERS=5 #lvl for latching the door
+	ACCESS_ALONE=10 #lvl for locking and unlocking ´
 
+	# return codes for leave
 	NOTHING_SPECIAL=0
 	LEAVE_WITHOUT_ENTER=1
 	NO_MORE_TRUSTED=2
@@ -36,3 +37,6 @@ class Status_manager:
 
 	def is_empty(self):
 		return len(self.persons)==0
+
+	def flush(self):
+		self.persons.clear()

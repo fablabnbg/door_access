@@ -25,6 +25,7 @@ def card_on_exit(ident):
 	elif lab_status==stat.EMPTY:
 		reader_door.beep(20)
 	#if stat.is_empty():
+	stat.flush()
 	lock.close(reader_exit.beep)
 
 stat=status_manager.Status_manager()
