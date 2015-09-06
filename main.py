@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import lock_ctrl
 from  IOctrl import gpio
+from lock_behaviour import Lock_behaviour
 import NFCreader
 import authentication
 import door

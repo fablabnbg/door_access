@@ -1,6 +1,6 @@
 class Door:
 	def __init__(self,IO_door):
-		self.gpio=IOdoor
+		self.gpio=IO_door
 		self.gpio.set_dir('in')
 	
 	def is_open(self):
