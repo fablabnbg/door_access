@@ -26,31 +26,19 @@ class Lock_ctrl:
 		return self.state=='locked'
 
 	def close(self):
-		"""Lock the door. Creates separate thread."""
-		def runthread():
-			print('lock')
-			self.closer.set(1)
-			time.sleep(0.1)
-			self.closer.set(0)
-			self.state='locked'
-		threading.Thread(target=runthread).start()
+		"""Lock the door."""
+		print('lock')
+		self.state='locked'
+		self.closer.tap(0.1)
 
 
 	def open(self):
-		"""unlock and open the door. Creates separate thread."""
-		def runthread():
-			print('open')
-			self.opener.set(1)
-			time.sleep(0.1)
-			self.opener.set(0)
-			self.state='open'
-		threading.Thread(target=runthread).start()
+		"""unlock and open the door."""
+		print('open')
+		self.state='open'
+		self.opener.tap(0.1)
 
 	def latch(self):
-		"""open the latch. Creates separate thread."""
-		def runthread():
-			print('latch')
-			self.latcher.set(1)
-			time.sleep(5)
-			self.latcher.set(0)
-		threading.Thread(target=runthread).start()
+		"""open the latch."""
+		print('latch')
+		self.latcher.tap(5)

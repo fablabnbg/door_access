@@ -5,6 +5,8 @@ IOctrl.gpio : read or write gpio pins
 IOctrl.adc  : read ADC (not implemented)
 """
 
+import time
+import threading
 import os
 
 portmap={
@@ -53,6 +55,18 @@ class gpio:
 			raise ValueError('Can only set value to one or zero not "{}"'.format(value))
 		with open(os.path.join(self.devname,'value'),'w') as f:
 			f.write(str(value))
+
+	def tap(self,duration):
+		"""Set value to high for duration and low again afterwards.
+
+		tap(duration)
+		duration : time in seconds to keep pin high
+		"""
+		def runthread():
+			self.set(1)
+			time.sleep(0.1)
+			self.set(0)
+		threading.Thread(target=runthread).start()
 
 	def get(self,change=False):
 		"""Get current value on pin. Returns 1 or 0.
