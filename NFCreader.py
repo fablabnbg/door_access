@@ -3,6 +3,14 @@ import serial
 import time
 
 class NFCreader(threading.Thread):
+	"""The NFCreader class controls an NFC reader on a serial port.
+	To actually start communication the "start"-method has to be called.
+
+	NFCreader(dev, on_card)
+	dev : path to serial device
+	on_card : callback executed when the reader signals a new card
+	"""
+
 	def __init__(self,dev,on_card,*args,**kwargs):
 		super().__init__(*args,**kwargs)
 		self.callback=on_card
@@ -10,6 +18,7 @@ class NFCreader(threading.Thread):
 		self.beeptime=0
 
 	def run(self):
+		"""Executed on new thread by "start"."""
 		while True:
 			if self.beeptime:
 				if self.beeptime>100:
@@ -21,14 +30,19 @@ class NFCreader(threading.Thread):
 				self.beeptime=0
 			line=self.s.readline()
 			if line:
-				self.interpret(line)
+				self._interpret(line)
 			else:
 				time.sleep(0.1)
 
 	def beep(self,duration):
+		"""Instruct NFCreader emit a beep of given duration,
+
+		beep(duration)
+		duration : integer from 0 to 99. Higher means longer
+		"""
 		self.beeptime=duration
 
-	def interpret(self,line):
+	def _interpret(self,line):
 		if line.startswith(b'New'):
 			try:
 				_,ident=line.split(b':',1)
