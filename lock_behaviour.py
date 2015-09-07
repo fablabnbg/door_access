@@ -2,6 +2,13 @@ import threading
 import time
 
 class Lock_behaviour:
+	"""The Lock_behaviour class defines the exact beahviour of the locking and unlocking of the door
+
+	Lock_behaviour(lock,door,beeper)
+	lock : lock_ctrl.Lock_ctrl class
+	door : door.Door class
+	beeper : callable used for issuing beeps
+	"""
 	def __init__(self,lock,door,beeper):
 		self.lock=lock
 		self.door=door
@@ -14,11 +21,15 @@ class Lock_behaviour:
 			threading.Thread(target=lambda timeout=0:self._close_sequencer(timeout)).start()
 
 	def close(self):
+		"""start door locking sequence. Starts a new thread"""
 		if not self.closing:
 			self.closing=True
 			threading.Thread(target=lambda timeout=60:self._close_sequencer(timeout)).start()
 
 	def open(self):
+		"""Open the door. Use the latch if it's unlocked.
+		Aborts the closing sequence if it's running.
+		"""
 		self.abort=True
 		if self.lock.is_locked():
 			self.lock.open()
