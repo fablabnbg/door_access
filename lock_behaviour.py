@@ -39,7 +39,11 @@ class Lock_behaviour:
 	def _close_sequencer(self,timeout):
 		print('start close')
 		def timed_out(started,duration):
+			"""Check if duration seconds have passed since started.
+			If duration is zero always return False.
+			"""
 			return duration and time.time()-started>duration
+		# states of the closing sequence
 		WAIT_OPEN_DOOR=0
 		WAIT_CLOSED_DOOR=1
 		WAIT_CERTAIN_CLOSED_DOOR=2
@@ -52,19 +56,25 @@ class Lock_behaviour:
 		state=WAIT_OPEN_DOOR
 		while not (timed_out(start_time,timeout) or self.abort):
 			if state==WAIT_OPEN_DOOR:
+				# First wait for the door to be open
 				if self.door.is_open():
 					state=WAIT_CLOSED_DOOR
 			if state==WAIT_CLOSED_DOOR:
+				# Wait for door to be closed again
 				if self.door.is_closed():
 					state=WAIT_CERTAIN_CLOSED_DOOR
-					waitstart=time.time()
+					waitstart=time.time() # start timer to make certain the door is closed
 			if state==WAIT_CERTAIN_CLOSED_DOOR:
+				# wait for the door to be certainly closed
 				if self.door.is_open():
+					# the door was opened again. Return to waiting for closed door
 					state=WAIT_CLOSED_DOOR
 				if self.door.is_closed() and timed_out(waitstart,0.5):
+					# the door was closed for half a second. Lock door and exit state machine
 					self.lock.close()
 					break
 			if timed_out(lastbeep,beep_period):
+				# Beep while statemachine is runnning
 				self.beep(3)
 				lastbeep=time.time()
 			time.sleep(0.1)

@@ -43,12 +43,9 @@ class NFCreader(threading.Thread):
 		self.beeptime=duration
 
 	def _interpret(self,line):
-		if line.startswith(b'New'):
+		if line.startswith(b'New'): # Lines signifying a new supported card start with "New something card" and contain the uid after a colon
 			try:
 				_,ident=line.split(b':',1)
 			except ValueError:
 				return
 			self.callback(ident.strip())
-
-
-
