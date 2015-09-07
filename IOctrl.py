@@ -1,3 +1,10 @@
+"""The IOctrl module enables access to the integrated peripherals of 
+the Arietta G25.
+
+IOctrl.gpio : read or write gpio pins
+IOctrl.adc  : read ADC (not implemented)
+"""
+
 import os
 
 portmap={
@@ -6,6 +13,12 @@ portmap={
 	}
 
 class gpio:
+	"""The gpio class represents one gpio pin.
+
+	gpio(num,direction=None)
+	num : number of the controlled pin
+	direction : 'in' or 'out'
+	"""
 	def __init__(self,num,direction=None):
 		port='A' if num<64 else 'C'
 		self.devname='/sys/class/gpio/pio'+port+str(portmap[port][num])
@@ -16,6 +29,9 @@ class gpio:
 			self.set_dir(direction)
 
 	def set_dir(self,direction):
+		"""Set direction of pin.
+		Either 'in' or 'out'
+		"""
 		if not direction in ('in','out'):
 			raise ValueError('direction must be "in" or "out" not "{}"'.format(direction))
 		self.direction=direction
@@ -23,6 +39,11 @@ class gpio:
 			f.write(self.direction)
 
 	def set(self,value,change=False):
+		"""Set value on pin to high (1) or low (0).
+		set(value,change=False)
+		value : either 1 or 0
+		change : set to one to automatically change direction to 'out'
+		"""
 		if not self.direction=='out':
 			if change:
 				self.direction('out')
@@ -34,6 +55,10 @@ class gpio:
 			f.write(str(value))
 
 	def get(self,change=False):
+		"""Get current value on pin. Returns 1 or 0.
+		get(change=False)
+		change : set to True to automatically change direction to 'in'
+		"""
 		if not self.direction=='in':
 			if change:
 				self.direction('in')
