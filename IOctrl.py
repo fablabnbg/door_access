@@ -9,11 +9,6 @@ import time
 import threading
 import os
 
-portmap={
-	'A':{a:a for a in range(22,32)},
-	'C':{a+64:a for a in range(32)},
-	}
-
 class gpio:
 	"""The gpio class represents one gpio pin.
 
@@ -23,7 +18,9 @@ class gpio:
 	"""
 	def __init__(self,num,direction=None):
 		port='A' if num<64 else 'C'
-		self.devname='/sys/class/gpio/pio'+port+str(portmap[port][num])
+		portnum=num if num<64 else num-64
+
+		self.devname='/sys/class/gpio/pio'+port+str(portnum)
 		if not os.path.exists(self.devname):
 			with open('/sys/class/gpio/export','w') as f:
 				f.write(str(num))
