@@ -11,7 +11,7 @@ import os
 
 portmap={
 	'A':{a:a for a in range(22,32)},
-	'C':{64:0,65:1,66:2,67:3,68:4,95:31},
+	'C':{a+64:a for a in range(32)},
 	}
 
 class gpio:
