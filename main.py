@@ -22,16 +22,23 @@ def card_on_exit(ident):
 		reader_door.beep(99)
 	elif lab_status==stat.EMPTY:
 		reader_door.beep(20)
+	else:
+		reader_door.beep(10)
 	#if stat.is_empty():
 	stat.flush()
 	lock.close()
 
 stat=status_manager.Status_manager()
 door=door.Door(gpio(30))
-lock_control=lock_ctrl.Lock_ctrl(IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(23))
+lock_control=lock_ctrl.Lock_ctrl(IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(29))
+
+# set unused but connected gpios to output
+gpio(66,'out')
+gpio(68,'out')
+
 auth=authentication.Auth_file('/etc/door_access')
-reader_door=NFCreader.NFCreader(dev='/dev/ttyS1',on_card=card_on_door)
-reader_exit=NFCreader.NFCreader(dev='/dev/ttyS2',on_card=card_on_exit)
+reader_door=NFCreader.NFCreader(dev='/dev/ttyS2',on_card=card_on_door)
+reader_exit=NFCreader.NFCreader(dev='/dev/ttyS3',on_card=card_on_exit)
 lock=Lock_behaviour(lock_control,door,reader_exit.beep)
 
 reader_exit.start()
