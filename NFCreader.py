@@ -21,7 +21,7 @@ class NFCreader(threading.Thread):
 		"""Executed on new thread by "start"."""
 		while True:
 			if self.beeptime:
-				if self.beeptime>100:
+				if self.beeptime>=100:
 					self.beeptime=99
 				if self.beeptime<0:
 					self.beeptime=0
