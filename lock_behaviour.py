@@ -2,7 +2,7 @@ import threading
 import time
 
 class Lock_behaviour:
-	"""The Lock_behaviour class defines the exact beahviour of the locking and unlocking of the door
+	"""The Lock_behaviour class defines the exact behaviour of the locking and unlocking of the door
 
 	Lock_behaviour(lock,door,beeper)
 	lock : lock_ctrl.Lock_ctrl class

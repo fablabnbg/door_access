@@ -20,10 +20,10 @@ class Auth_file:
 		self.filename=filename
 	
 	def auth(self,identity):
-		"""Get the access level for the gived uid. The authentication file is reread with every call.
+		"""Get the access level for the given uid. The authentication file is reread with every call.
 
 		auth(identity)
-		identity : bytes object with the uid to authenticate. space separated hex-bytes
+		identity : bytes object with the uid to authenticate. Space separated hex-bytes
 		"""
 		try:
 			with open(self.filename,'rb') as f:
