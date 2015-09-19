@@ -15,6 +15,8 @@ class Lock_behaviour:
 		self.beep=beeper
 		self.abort=False
 		self.closing=False
+		self.open_retry_count=0
+		self.open_time=0
 		if door.is_closed():
 			self.lock.close()
 		else:
@@ -31,7 +33,15 @@ class Lock_behaviour:
 		Aborts the closing sequence if it's running.
 		"""
 		self.abort=True
-		if self.lock.is_locked():
+		t=time.time()
+		if self.open_time+60>t:
+			# Tried to open door more than once within one minute
+			self.open_retry_count+=1
+		else:
+			# longer than one minute since trying to open
+			self.self.open_time=t
+			self.open_retry_count=1
+		if self.lock.is_locked() or self.open_retry_count>=3:
 			self.lock.open()
 		else:
 			self.lock.latch()
