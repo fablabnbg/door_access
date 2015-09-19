@@ -17,7 +17,7 @@ class gpio:
 	num : number of the controlled pin
 	direction : 'in' or 'out'
 	"""
-	def __init__(self,num,direction=None):
+	def __init__(self,num,direction=None,active_low=False):
 		port='A' if num<64 else 'C'
 		portnum=num if num<64 else num-64
 
@@ -25,6 +25,10 @@ class gpio:
 		if not os.path.exists(self.devname):
 			with open('/sys/class/gpio/export','w') as f:
 				f.write(str(num))
+
+		with open(os.path.join(self.devname,'active_low'),'w') as f:
+			f.write(int(active_low))
+
 		if direction:
 			self.set_dir(direction)
 
@@ -91,7 +95,7 @@ class gpio:
 	def wait(self):
 		"""For for edge defined with 'set_interrupt'"""
 		p=select.poll()
-		with open(self.devname,'value') as f:
+		with open(os.path.join(self.devname,'value')) as f:
 			p.register(f,select.POLLPRI|select.POLLERR)
 			p.poll()
 
