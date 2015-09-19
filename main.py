@@ -2,6 +2,7 @@
 import lock_ctrl
 from  IOctrl import gpio
 from lock_behaviour import Lock_behaviour
+from edge_detect import Edge_detect
 import NFCreader
 import authentication
 import door
@@ -31,6 +32,7 @@ def card_on_exit(ident):
 stat=status_manager.Status_manager()
 door=door.Door(gpio(30))
 lock_control=lock_ctrl.Lock_ctrl(IO_open=gpio(95),IO_close=gpio(67),IO_latch=gpio(29))
+lock_led=Edge_detect(gpio(23,active_low=True))
 
 # set unused but connected gpios to output
 gpio(66,'out')
@@ -39,7 +41,7 @@ gpio(68,'out')
 auth=authentication.Auth_file('/etc/door_access')
 reader_door=NFCreader.NFCreader(dev='/dev/ttyS2',on_card=card_on_door)
 reader_exit=NFCreader.NFCreader(dev='/dev/ttyS3',on_card=card_on_exit)
-lock=Lock_behaviour(lock_control,door,reader_exit.beep)
+lock=Lock_behaviour(lock_control,door,lock_led,reader_exit.beep)
 
 reader_exit.start()
 reader_door.start()

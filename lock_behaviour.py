@@ -9,9 +9,10 @@ class Lock_behaviour:
 	door : door.Door class
 	beeper : callable used for issuing beeps
 	"""
-	def __init__(self,lock,door,beeper):
+	def __init__(self,lock,door,lock_led,beeper):
 		self.lock=lock
 		self.door=door
+		self.lock_led=lock_led
 		self.beep=beeper
 		self.abort=False
 		self.closing=False
@@ -33,6 +34,9 @@ class Lock_behaviour:
 		Aborts the closing sequence if it's running.
 		"""
 		self.abort=True
+		# Wait for closing to actually end
+		while self.closing:
+			time.sleep(0.05)
 		t=time.time()
 		if self.open_time+60>t:
 			# Tried to open door more than once within one minute
@@ -57,14 +61,16 @@ class Lock_behaviour:
 		WAIT_OPEN_DOOR=0
 		WAIT_CLOSED_DOOR=1
 		WAIT_CERTAIN_CLOSED_DOOR=2
+		WAIT_LOCK_TURN_FINISHED=3
 
 		start_time=time.time()
 		lastbeep=start_time
 		beep_period=2
 		self.abort=False
+		abortable=True # disables abort when lock is turning
 
 		state=WAIT_OPEN_DOOR
-		while not (timed_out(start_time,timeout) or self.abort):
+		while not (timed_out(start_time,timeout) or (self.abort and abortable)):
 			if state==WAIT_OPEN_DOOR:
 				# First wait for the door to be open
 				if self.door.is_open():
@@ -82,11 +88,21 @@ class Lock_behaviour:
 				if self.door.is_closed() and timed_out(waitstart,0.5):
 					# the door was closed for half a second. Lock door and exit state machine
 					self.lock.close()
+					abortable=False
+					# reset timeout to something large enough to allow the lock to turn
+					start_time=time.time()
+					timeout=60
+					self.lock_led.reset()
+					state=WAIT_LOCK_TURN_FINISHED
+			if state==WAIT_LOCK_TURN_FINISHED:
+				# wait for lock to finish turning
+				if self.lock_led.lastwidth>1:
 					break
 			if timed_out(lastbeep,beep_period):
 				# Beep while statemachine is runnning
 				self.beep(3)
 				lastbeep=time.time()
 			time.sleep(0.1)
+		time.sleep(1)
 		self.abort=False
 		self.closing=False
