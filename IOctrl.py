@@ -8,6 +8,7 @@ IOctrl.adc  : read ADC (not implemented)
 import time
 import threading
 import os
+import select
 
 class gpio:
 	"""The gpio class represents one gpio pin.
@@ -36,6 +37,15 @@ class gpio:
 		self.direction=direction
 		with open(os.path.join(self.devname,'direction'),'w') as f:
 			f.write(self.direction)
+
+	def set_interrupt(self,int_type):
+		"""Set edge on which 'wait' will return.
+		Can be 'rising', 'falling' or 'both'
+		"""
+		if not int_type in ('rising','falling','both'):
+			raise ValueError('int_type must be "rising", "falling" or "both" not "{}"'.format(int_type))
+		with open(os.path.join(self.devname,'edge'),'w') as f:
+			f.write(int_type)
 
 	def set(self,value,change=False):
 		"""Set value on pin to high (1) or low (0).
@@ -77,6 +87,13 @@ class gpio:
 				raise ValueError('Port is set to output and function not asked to change')
 		with open(os.path.join(self.devname,'value'),'r') as f:
 			return int(f.read())
+	
+	def wait(self):
+		"""For for edge defined with 'set_interrupt'"""
+		p=select.poll()
+		with open(self.devname,'value') as f:
+			p.register(f,select.POLLPRI|select.POLLERR)
+			p.poll()
 
 class adc:
 	def __init__(self,num):
