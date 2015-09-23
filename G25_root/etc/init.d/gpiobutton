@@ -19,7 +19,7 @@ PIDFILE=/var/run/$NAME
 # can be specified)
 # COMMAND1 is executed at a short button press (< 3s)
 # COMMAND2 is executed at a long button press (> 3s)
-COMMAND1="/sbin/shutdown -h now"
+COMMAND1="/sbin/shutdown -r now"
 COMMAND2="/sbin/shutdown -h -H now"
 
 # This is the Kernel ID of the GPIO pin connected to the push button
