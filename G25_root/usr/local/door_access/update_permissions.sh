@@ -7,7 +7,7 @@ if [ $? -eq 1 ]; then
 	mv /mnt/last_change_tmp.diff /mnt/last_change.diff
 	mkdir -p /mnt/history
 
-	lastnum=$(ls /mnt/history | sort -g | tail -n 1)
+	lastnum=$(ls /mnt/history | sed 's/\..*$//' | sort -g | tail -n 1)
 	num=$((lastnum+1))
 	cp /mnt/last_change.diff /mnt/history/$num.diff
 	cp /etc/door_access /mnt/history/$num.csv
