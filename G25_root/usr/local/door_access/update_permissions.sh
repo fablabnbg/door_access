@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 mount $DEVNAME /mnt 2>&1 >> /home/acme/test.txt
-diff /mnt/door_access.csv /etc/door_access > /mnt/last_change_tmp.diff
+diff -u /etc/door_access /mnt/door_access.csv > /mnt/last_change_tmp.diff
 if [ $? -eq 1 ]; then
 	cp /mnt/door_access.csv /etc/door_access
 	mv /mnt/last_change_tmp.diff /mnt/last_change.diff
