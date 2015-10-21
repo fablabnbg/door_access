@@ -37,15 +37,16 @@ class Lock_behaviour:
 		"""
 		self.abort=True
 		t=time.time()
-		if self.open_time+30>t:
-			# Tried to open door more than once within one half minute
+		if self.open_time+10>t:
+			# Tried to open door more than once within ten seconds
 			self.open_retry_count+=1
 		else:
-			# longer than one minute since trying to open
+			# longer than ten seconds since trying to open
 			self.open_time=t
 			self.open_retry_count=1
 		if self.open_retry_count>=3 and access_level>=10:
-			# Tried to open three times within half a minute. Open without sequencing
+			# Tried to open three times within ten seconds. Open without sequencing
+			print("unconditional open")
 			self.lock.open()
 		if self.lock.is_locked():
 			if not self.opening:
