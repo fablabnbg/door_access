@@ -7,6 +7,7 @@ class Lock_behaviour:
 	Lock_behaviour(lock,door,beeper)
 	lock : lock_ctrl.Lock_ctrl class
 	door : door.Door class
+	lock_led : Edge_detect.edge_detect class. Used to check if lock is turning
 	beeper : callable used for issuing beeps
 	"""
 	def __init__(self,lock,door,lock_led,beeper):
@@ -15,6 +16,7 @@ class Lock_behaviour:
 		self.lock_led=lock_led
 		self.beep=beeper
 		self.abort=False
+		self.opening=False
 		self.closing=False
 		self.open_retry_count=0
 		self.open_time=0
@@ -34,9 +36,6 @@ class Lock_behaviour:
 		Aborts the closing sequence if it's running.
 		"""
 		self.abort=True
-		# Wait for closing to actually end
-		while self.closing:
-			time.sleep(0.05)
 		t=time.time()
 		if self.open_time+30>t:
 			# Tried to open door more than once within one half minute
@@ -45,10 +44,43 @@ class Lock_behaviour:
 			# longer than one minute since trying to open
 			self.open_time=t
 			self.open_retry_count=1
-		if (self.lock.is_locked() or self.open_retry_count>=3) and access_level>=10:
+		if self.open_retry_count>=3 and access_level>=10:
+			# Tried to open three times within half a minute. Open without sequencing
 			self.lock.open()
+		if self.lock.is_locked():
+			if not self.opening:
+				self.opening=True
+				threading.Thread(target=self._open_sequencer()).start()
 		else:
 			self.lock.latch()
+
+	def _open_sequencer(self):
+		print('start open')
+		def timed_out(started,duration):
+			"""Check if duration seconds have passed since started.
+			If duration is zero always return False.
+			"""
+			return duration and time.time()-started>duration
+		# states of the opening sequence
+		WAIT_CLOSE_FINISH=0
+		DO_OPEN=1
+		state=WAIT_CLOSE_FINISH
+
+		while True:
+			if state==WAIT_CLOSE_FINISH:
+				if not self.closing:
+					state=DO_OPEN
+					start=time.time()
+					self.lock_led.reset()
+					self.lock.open()
+			if state==DO_OPEN:
+				if timed_out(start,1.5) and self.lock_led.edgecount==0:
+					state=WAIT_CLOSE_FINISH
+				if self.lock_led.edgecount>40:
+					break
+			time.sleep(0.1)
+		time.sleep(1)
+		self.opening=False
 
 	def _close_sequencer(self,timeout):
 		print('start close')
@@ -98,6 +130,10 @@ class Lock_behaviour:
 				# wait for lock to finish turning
 				if self.lock_led.lastwidth>1:
 					break
+				# check if lock actually startet turning
+				if timed_out(start_time,1.5) and self.lock_led.edgecount==0:
+					# lock has not turned after 1.5 seconds. edgecount should be about 10. retry
+					state=WAIT_CERTAIN_CLOSED_DOOR
 			if timed_out(lastbeep,beep_period):
 				# Beep while statemachine is runnning
 				self.beep(3)
