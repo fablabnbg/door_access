@@ -2,6 +2,9 @@
 authenticating a NFC uid
 """
 
+from urllib.request import urlopen, HTTPError
+import json
+
 class Auth_file:
 	"""The Auth_file class authenticates against a local file.
 
@@ -37,3 +40,20 @@ class Auth_file:
 		except:
 			print('Error in Auth_file')
 		return 0
+
+class Auth_http:
+	def __init__(self,addr):
+		self.addr=addr
+	
+	def auth(self,identity):
+		uid=identity.decode('ascii').replace(' ','_')
+		try:
+			response=urlopen(self.addr+uid)
+		except HTTPError:
+			return 0
+		result=json.loads(response.readall().decode('ascii'))
+		if not 'access_level' in result:
+			return 0
+		return result['access_level']
+
+
