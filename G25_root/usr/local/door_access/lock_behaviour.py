@@ -51,7 +51,7 @@ class Lock_behaviour:
 		if self.lock.is_locked():
 			if not self.opening:
 				self.opening=True
-				threading.Thread(target=self._open_sequencer()).start()
+				threading.Thread(target=self._open_sequencer).start()
 		else:
 			self.lock.latch()
 
@@ -77,7 +77,7 @@ class Lock_behaviour:
 			if state==DO_OPEN:
 				if timed_out(start,1.5) and self.lock_led.edgecount==0:
 					state=WAIT_CLOSE_FINISH
-				if self.lock_led.edgecount>40:
+				if self.lock_led.edgecount>40 or timed_out(start,10):
 					break
 			time.sleep(0.1)
 		time.sleep(1)
