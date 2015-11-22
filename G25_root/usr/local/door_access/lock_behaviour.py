@@ -25,13 +25,13 @@ class Lock_behaviour:
 		else:
 			threading.Thread(target=lambda timeout=0:self._close_sequencer(timeout)).start()
 
-	def close(self):
+	def close(self,callback=None):
 		"""start door locking sequence. Starts a new thread"""
 		if not self.closing:
 			self.closing=True
-			threading.Thread(target=lambda timeout=60:self._close_sequencer(timeout)).start()
+			threading.Thread(target=lambda timeout=60:self._close_sequencer(timeout,callback)).start()
 
-	def open(self):
+	def open(self,callback=None):
 		"""Open the door. Use the latch if it's unlocked.
 		Aborts the closing sequence if it's running.
 		"""
@@ -51,11 +51,11 @@ class Lock_behaviour:
 		if self.lock.is_locked():
 			if not self.opening:
 				self.opening=True
-				threading.Thread(target=self._open_sequencer).start()
+				threading.Thread(target=lambda:self._open_sequencer(callback)).start()
 		else:
 			self.lock.latch()
 
-	def _open_sequencer(self):
+	def _open_sequencer(self,callback):
 		print('start open')
 		def timed_out(started,duration):
 			"""Check if duration seconds have passed since started.
@@ -80,10 +80,12 @@ class Lock_behaviour:
 				if self.lock_led.edgecount>40 or timed_out(start,10):
 					break
 			time.sleep(0.1)
+		if callback:
+			callback()
 		time.sleep(1)
 		self.opening=False
 
-	def _close_sequencer(self,timeout):
+	def _close_sequencer(self,timeout,callback=None):
 		print('start close')
 		def timed_out(started,duration):
 			"""Check if duration seconds have passed since started.
@@ -130,6 +132,8 @@ class Lock_behaviour:
 			if state==WAIT_LOCK_TURN_FINISHED:
 				# wait for lock to finish turning
 				if self.lock_led.lastwidth>1:
+					if callback:
+						callback()
 					break
 				# check if lock actually startet turning
 				if timed_out(start_time,1.5) and self.lock_led.edgecount==0:
