@@ -99,12 +99,11 @@ class Lock_behaviour:
 		WAIT_LOCK_TURN_FINISHED=3
 
 		start_time=time.time()
-		lastbeep=start_time
-		beep_period=2
 		self.abort=False
 		abortable=True # disables abort when lock is turning
 
 		state=WAIT_OPEN_DOOR
+		self.beep.wait_for_user(0)
 		while not (timed_out(start_time,timeout) or (self.abort and abortable)):
 			if state==WAIT_OPEN_DOOR:
 				# First wait for the door to be open
@@ -139,11 +138,8 @@ class Lock_behaviour:
 				if timed_out(start_time,1.5) and self.lock_led.edgecount==0:
 					# lock has not turned after 1.5 seconds. edgecount should be about 10. retry
 					state=WAIT_CERTAIN_CLOSED_DOOR
-			if timed_out(lastbeep,beep_period):
-				# Beep while statemachine is runnning
-				self.beep(3)
-				lastbeep=time.time()
 			time.sleep(0.1)
 		time.sleep(1)
 		self.abort=False
 		self.closing=False
+		self.beep.running=False
