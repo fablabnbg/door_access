@@ -35,3 +35,34 @@ class Beeper:
 		time.sleep(0.2)
 		self.beep(10)
 
+
+# earlier try, maybe use these times
+#import time
+#
+#class Beeper:
+#	def __init__(self,beep_cmd):
+#		self.beep=beep_cmd
+#
+#	def ack(self):
+#		self.beep(4)
+#
+#	def nak(self):
+#		self.beep(1)
+#		time.sleep(0.15)
+#		self.beep(1)
+#
+#	def feedback(self):
+#		self.beep(0)
+#
+#	def notice(self):
+#		self.beep(1)
+#		self.sleep(2)
+#
+#	def notice(self):
+#		self.beep(1)
+#		self.sleep(0.5)
+#
+#	def error(self):
+#		self.nak()
+#		time.sleep(0.2)
+#		self.beep(7)
