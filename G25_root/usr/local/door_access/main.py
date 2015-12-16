@@ -17,12 +17,12 @@ import beeper
 def card_on_door(ident):
 	print(ident)
 	keypad.flush()
-	ident_store.uid=None
+	if door.is_closed:
+		ident_store.uid=ident
 	beep_door.confirm()
 	response=decide.execute('open',ident,pin=None)
 	if response=='pin':
 		beep_door.wait_for_user(60)
-		ident_store.uid=ident
 
 def card_on_exit(ident):
 	print(ident)
@@ -30,6 +30,7 @@ def card_on_exit(ident):
 	decide.execute('close',ident)
 
 def on_door_open():
+	ident_store.uid=None
 	if lock_control.is_locked():
 		print("Door opened while lock expected to be locked.")
 		alarm.send('OPEN_WHILE_CLOSED')
