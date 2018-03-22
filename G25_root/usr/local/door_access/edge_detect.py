@@ -30,7 +30,7 @@ class Edge_detect(threading.Thread):
 		with self.mutex:
 			self.edgecount=0
 			self.lastwidth=0
-			self.lasttime=0
+			self.lasttime=time.time()
 
 	def run(self):
 		while not self.abort:
