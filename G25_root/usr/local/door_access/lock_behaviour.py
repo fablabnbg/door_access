@@ -136,13 +136,8 @@ class Lock_behaviour:
 					break
 				# check if lock actually startet turning
 				if timed_out(start_time,1.5):
-					if self.lock_led.edgecount>0:
-						# lock has turned after 1.5 seconds but last led-light was not detected. assume door is locked anyway
-						if callback:
-							callback()
-						break
-					else: # lock did not turn at all. Resend close command
-						state=WAIT_CERTAIN_CLOSED_DOOR
+					# lock timed out. Retry
+					state=WAIT_CERTAIN_CLOSED_DOOR
 						
 			time.sleep(0.1)
 		time.sleep(1)
