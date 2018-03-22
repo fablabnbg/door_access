@@ -138,7 +138,6 @@ class Lock_behaviour:
 				if timed_out(start_time,1.5):
 					# lock timed out. Retry
 					state=WAIT_CERTAIN_CLOSED_DOOR
-						
 			time.sleep(0.1)
 		time.sleep(1)
 		self.abort=False
