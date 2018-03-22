@@ -20,7 +20,6 @@ class Lock_behaviour:
 		self.closing=False
 		self.open_retry_count=0
 		self.open_time=0
-		self.expected_lastwidth=1
 		if door.is_closed():
 			self.lock.close()
 		else:
@@ -131,16 +130,19 @@ class Lock_behaviour:
 					state=WAIT_LOCK_TURN_FINISHED
 			if state==WAIT_LOCK_TURN_FINISHED:
 				# wait for lock to finish turning
-				if self.lock_led.lastwidth>self.expected_lastwidth:
+				if self.lock_led.lastwidth>1:
 					if callback:
 						callback()
 					break
 				# check if lock actually startet turning
 				if timed_out(start_time,1.5):
-					if self.lock_led.edgecount>3:
-						# lock has turned after 1.5 seconds but last led-light was not detected. edgecount should be about 10. retry
-						self.expected_lastwidth-=0.1 # expect smaller last_width
-					state=WAIT_CERTAIN_CLOSED_DOOR
+					if self.lock_led.edgecount>0:
+						# lock has turned after 1.5 seconds but last led-light was not detected. assume door is locked anyway
+						if callback:
+							callback()
+						break
+					else: # lock did not turn at all. Resend close command
+						state=WAIT_CERTAIN_CLOSED_DOOR
 						
 			time.sleep(0.1)
 		time.sleep(1)
